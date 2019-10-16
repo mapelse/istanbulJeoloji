@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+        <meta charset='utf-8' />
+    <title>İstanbul Jeoloji Haritası</title>
+    <meta name="description" content="istanbul,deprem, earthquake, geocoder,geology, geology map, geological map, ibb, istanbul büyükşehir belediyesi,jeoloji, jeoloji haritasi, jeolojik harita, interaktif"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-57534785-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-57534785-2');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+  integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+  crossorigin=""/>
+
+    <link rel="stylesheet" href="assets/css/leaflet-sidebar.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.66.1/dist/L.Control.Locate.min.css" />
+    <link rel="stylesheet" href="assets/css/L.Control.MousePosition.css" />
+    <!-- bootstrap css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body, #map {
+            height: 100%;
+            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+        .lorem {
+            font-style: italic;
+            color: #AAA;
+        }
+
+         .leaflet-control-layers-group-name {
+            font-weight: bold;
+            margin-bottom: .2em;
+            display: block;
+    }
+    </style>
+</head>
+<body>
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+
+                <!-- <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li> -->
+            </ul>
+             <ul role="tablist">
+                <li><a href="#" role="tab" target="_blank"><i class="fa fa-twitter fa-lg"></i></a></li>
+            </ul>
+            <!--<ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul> -->
+        </div>
+
+        <!-- Tab panes -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                   <!-- in case of necessity write a title here such as "Minimize the bar" -->
+                   <p style="font-size: 15px">Minimize the Bar</p>
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-right"></i></span>
+                </h1>
+
+
+
+                <!--<p class="lorem" style="margin-top:20px">Click logo on the right to get back to the home page.</p>-->
+
+                <h4 style="margin-top:30px">İstanbul Jeoloji Haritası</h4>
+
+                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify >Bu harita Twitter'da gördüğüm <a href="https://twitter.com/Paleosismolog/status/1183796422300311552" target="_blank">şu paylaşım</a>'dan esinelenerek hazırlanmıştır. Veri İstanbul Büyükşehir Belediyesi tarafından oluşturulmuştur.Haritayı hazırlamaktaki temel amaç beklenen büyük İstanbul depremi öncesi zeminin jeolojik yapısı hakkında bir fikir vermektir.</p>
+
+                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify >
+                 Kullanım için, eğer İstanbul içerisinde an itibariyle bulunduğunuz konumun jeolojisini merak ediyorsanız sol üstte bulunan "Beni bul" butonuna tıklayabilirsiniz. Eğer İstanbul'da değilseniz ya da İstanbul'da bulunduğunuz konum dışında bir konuma göz atmak istiyorsanız sağ üstteki mercek sembolüne tıklayarak adres yazabilir (Örn:"Abide-i Hürriyet Cd. No:10" yazıp enter'a bastığınızda çıkan seçeneklerden seçim yapabilirsiniz) ya da merceğin üzerindeki simgeye tıklayıp oradan uydu seçeneğini seçerek de merak ettiğiniz adresi bulabilirsiniz. İstediğiniz alanı bulduktan sonra tekrar jeoloji haritasını açarak inceleyebilirsiniz.</p>
+
+
+                 <p style="margin-top:130px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify >İletişim: mapelse@outlook.com</p>
+
+
+                <!--<p style="margin-top:120px;  font-family:'Ubuntu', sans-serif; line-height: 5px; font-size: 0.75em" align=justify ><i> References</i></p>
+
+                 <p style="margin-top:5px;  font-family:'Ubuntu', sans-serif; line-height: 20px; font-size: 0.75em" align=justify ><i> Truck icon made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"              title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"              title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></i></p> -->
+
+
+
+
+                <!-- just added this button as a reminder for using this bar as button container in future works-->
+                <!-- <button type="button" class="btn btn-primary">Primary</button> -->
+
+            </div>
+
+            <div class="leaflet-sidebar-pane" id="profile">
+                <h1 class="leaflet-sidebar-header">Profile<span class="leaflet-sidebar-close"><i class="fa fa-caret-right"></i></span></h1>
+            </div>
+
+            <div class="leaflet-sidebar-pane" id="messages">
+                <h1 class="leaflet-sidebar-header">Messages<span class="leaflet-sidebar-close"><i class="fa fa-caret-right"></i></span></h1>
+            </div>
+
+            <div class="leaflet-sidebar-pane" id="settings">
+                <h1 class="leaflet-sidebar-header">Settings<span class="leaflet-sidebar-close"><i class="fa fa-caret-right"></i></span></h1>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="map"></div>
+
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+    integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+    crossorigin=""></script>
+    <script src="assets/js/leaflet-sidebar.js"></script>
+    <script src="assets/js/L.Control.MousePosition.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.66.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+    <!-- below is for bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+    <!--for reading geojson via ajax-->
+    <script src="assets/js/leaflet-ajax.js" ></script>
+    <!-- for titling the layer groups-->
+    <script src="https://rawgithub.com/ismyrnow/Leaflet.groupedlayercontrol/master/src/leaflet.groupedlayercontrol.js"></script>
+    <!-- animated marker-->
+    <script src="assets/js/MovingMarker.js" ></script>
+
+
+    <script>
+        //mapbox
+
+        //basemaps defined below
+
+        /*var grayscale=L.tileLayer('https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; OpenStreetMap contributors'
+        });*/
+
+        var osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; OpenStreetMap contributors'
+        });
+
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+        var grayscale = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+});
+        var mapbox=  L.tileLayer(
+        'https://api.mapbox.com/styles/v1/sanozmen/ck1t1spma2m0e1cqnz2zwekk8/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2Fub3ptZW4iLCJhIjoib2xwbVQtQSJ9.1ldcOvJz39J-WFX89QdO_Q', {
+             attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+
+});
+
+
+
+
+
+        //initiating the map variable
+        var map = L.map('map', {
+          zoom: 10,
+          center: [41.205,29.092],
+          layers: [mapbox]
+
+        });
+        //setting the basic attributes of the map
+        //map.setMaxBounds(map.getBounds());
+        map.setMinZoom(7);
+        map.setMaxZoom(16);
+
+        //grouping base layers defined above and assigning them to a var
+        var baseLayers = {
+
+            "Istanbul Geology": mapbox,
+            "Satellite": Esri_WorldImagery
+           };
+
+        //Adding all layers and feautes to map
+        L.control.groupedLayers(baseLayers).addTo(map);
+        //initiating the side bar
+        var sidebar = L.control.sidebar({ container: 'sidebar', position: 'right' })
+            .addTo(map)
+            .open('home');
+      // add geolocator
+      L.control.locate({
+        strings: {
+        title: "Beni Bul"
+    }
+      }).addTo(map);
+
+      //add mouse position
+      L.control.mousePosition().addTo(map);
+      L.Control.geocoder().addTo(map);
+
+
+    </script>
+</body>
+</html>
