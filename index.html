@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="assets/css/leaflet-sidebar.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.66.1/dist/L.Control.Locate.min.css" />
-  
+
     <!-- bootstrap css-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
@@ -160,11 +160,7 @@
   subdomains: 'abcd',
   maxZoom: 19
 });
-        var mapbox=  L.tileLayer(
-        'https://api.mapbox.com/styles/v1/sanozmen/ck1t1spma2m0e1cqnz2zwekk8/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2Fub3ptZW4iLCJhIjoib2xwbVQtQSJ9.1ldcOvJz39J-WFX89QdO_Q', {
-             attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-
-});
+        var mapbox=  L.tileLayer('tiles/{z}/{x}/{y}.png');
 
 
 
@@ -180,7 +176,7 @@
         //setting the basic attributes of the map
         //map.setMaxBounds(map.getBounds());
         map.setMinZoom(7);
-        map.setMaxZoom(15);
+        map.setMaxZoom(13);
 
         //grouping base layers defined above and assigning them to a var
         var baseLayers = {
