@@ -54,6 +54,32 @@
             color: #AAA;
         }
 
+        .opacity-control {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            font-family: 'Ubuntu', sans-serif;
+            font-size: 12px;
+        }
+
+        .opacity-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .opacity-control input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .opacity-value {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #666;
+        }
 
     </style>
 
@@ -257,6 +283,27 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         	position:"topleft",
         	collapsed: true
         }).addTo(map);
+
+      // Opacity control
+      var OpacityControl = L.Control.extend({
+        options: {
+          position: 'topleft'
+        },
+        onAdd: function(map) {
+          var container = L.DomUtil.create('div', 'opacity-control');
+          container.innerHTML = '<label>Harita Saydamlığı</label><input type="range" min="0" max="100" value="60" id="opacitySlider"><div class="opacity-value"><span id="opacityValue">60</span>%</div>';
+          L.DomEvent.disableClickPropagation(container);
+          return container;
+        }
+      });
+      new OpacityControl().addTo(map);
+
+      // Update opacity on slider change
+      document.getElementById('opacitySlider').addEventListener('input', function() {
+        var value = this.value / 100;
+        osmTransparent.setOpacity(value);
+        document.getElementById('opacityValue').textContent = this.value;
+      });
     </script>
 </body>
 </html>
