@@ -22,7 +22,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9427199806484048"
      crossorigin="anonymous"></script>
 
-     
+
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -56,7 +56,7 @@
 
 
     </style>
-    
+
 </head>
 <body>
     <div id="sidebar" class="leaflet-sidebar collapsed">
@@ -96,8 +96,8 @@
                 href="https://mapelse.github.io/global_vs30/"><b> Turkiye Vs30 Deprem Sarsinti Potansiyeli Haritasi icin     tıklayınız</b></a> </p>
 
                 <p style="margin-top:1px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify ></p><a href="https://mapelse.github.io/fayHatlari/"><b>Türkiye Önemli Fay Hatları ve 6 Siddetinin Uzerinde Gerceklesen Depremler Haritası için tıklayınız</b></a> </p>
-                
-                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify> Not:Bu bilgiler genel bilgilendirme amaçlıdır ve profesyonel tavsiye olarak kabul edilmemelidir. 
+
+                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify> Not:Bu bilgiler genel bilgilendirme amaçlıdır ve profesyonel tavsiye olarak kabul edilmemelidir.
                     Mevcut verilerin kullanışlı bir şekilde sunumundan ibarettir.
                     Herhangi bir karar vermeden önce uygun uzmanlardan tavsiye almanız önerilir. </p>
                 <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify >Bu harita Twitter'da gördüğüm <a href="https://twitter.com/Paleosismolog/status/1183796422300311552" target="_blank">şu paylaşım</a>'dan esinelenerek hazırlanmıştır. Veri İstanbul Büyükşehir Belediyesi tarafından oluşturulmuştur. Haritayı hazırlamaktaki temel amaç beklenen büyük İstanbul depremi öncesi zeminin jeolojik yapısı hakkında bir fikir vermektir.</p>
@@ -135,7 +135,7 @@
 
                 <!-- just added this button as a reminder for using this bar as button container in future works-->
                 <!-- <button type="button" class="btn btn-primary">Primary</button> -->
-                        
+
             </div>
 
             <div class="leaflet-sidebar-pane" id="profile">
@@ -183,8 +183,13 @@
           attribution: 'Map data &copy; OpenStreetMap contributors'
         });*/
 
-        var osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; OpenStreetMap contributors'
+        var osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        var osmTransparent = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          opacity: 0.6
         });
 
         var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -223,9 +228,12 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
             "Uydu": esriImageryLabels
            };
         var tileLayers= {
-        	 "Istanbul Jeoloji": mapbox
-
+        	 "Istanbul Jeoloji": mapbox,
+        	 "Uydu": esriImageryLabels
         }
+        var overlayLayers = {
+          "OSM Labels": osmTransparent
+        };
 
         //initiating the side bar
         var sidebar = L.control.sidebar({ container: 'sidebar', position: 'right' })
@@ -245,7 +253,7 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       }).addTo(map);
 
        //Adding all layers and feautes to map
-        L.control.layers(tileLayers,baseLayers,{
+        L.control.layers(tileLayers, overlayLayers, {
         	position:"topleft",
         	collapsed: true
         }).addTo(map);
