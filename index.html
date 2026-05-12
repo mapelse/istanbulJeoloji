@@ -246,11 +246,15 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         map.setMinZoom(9);
         map.setMaxZoom(14);
 
-        //grouping overlay layers defined above and assigning them to a var
+        //grouping overlay layers (top layers) defined above and assigning them to a var
+        // `mapbox` remains always visible as the base layer
         var overlayLayers = {
           "Şehir Haritası": osmTransparent,
-          "Uydu": esriImageryLabels,
+          "Uydu": esriImageryLabels
         };
+
+        // Show 'Şehir Haritası' by default
+        map.addLayer(osmTransparent);
 
         //initiating the side bar
         var sidebar = L.control.sidebar({ container: 'sidebar', position: 'right' })
@@ -269,20 +273,11 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       	position: "topleft"
       }).addTo(map);
 
-       //Adding all layers and feautes to map
-        L.control.layers({}, overlayLayers, {
+       //Adding overlay layers to the control (checkboxes). We'll enforce exclusivity below.
+        L.control.layers(null, overlayLayers, {
         	position:"topleft",
             collapsed: false
         }).addTo(map);
-
-      // Make Uydu and Şehir Haritası mutually exclusive (radio buttons)
-      map.on('overlayadd', function(e) {
-        if (e.name === 'Uydu') {
-          map.removeLayer(osmTransparent);
-        } else if (e.name === 'Şehir Haritası') {
-          map.removeLayer(esriImageryLabels);
-        }
-      });
 
       // Opacity control
       var OpacityControl = L.Control.extend({
@@ -298,17 +293,48 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       });
       new OpacityControl().addTo(map);
 
+      // Make Uydu and Şehir Haritası mutually exclusive (simulate radio buttons)
+      map.on('overlayadd', function(e) {
+        if (e.name === 'Uydu') {
+          if (map.hasLayer(osmTransparent)) map.removeLayer(osmTransparent);
+        } else if (e.name === 'Şehir Haritası') {
+          if (map.hasLayer(esriImageryLabels)) map.removeLayer(esriImageryLabels);
+        }
+      });
+
+      // Helper to set opacity on a layer or a group of layers
+      function setLayerOpacity(layer, value) {
+        if (!layer) return;
+        if (typeof layer.setOpacity === 'function') {
+          layer.setOpacity(value);
+          return;
+        }
+        if (typeof layer.eachLayer === 'function') {
+          layer.eachLayer(function(l) {
+            if (typeof l.setOpacity === 'function') l.setOpacity(value);
+          });
+          return;
+        }
+        try {
+          var container = layer.getContainer && layer.getContainer();
+          if (container) container.style.opacity = value;
+        } catch (err) {}
+      }
+
       // Update opacity on slider change - controls whichever overlay is currently selected
       document.getElementById('opacitySlider').addEventListener('input', function() {
         var value = this.value / 100;
         if (map.hasLayer(esriImageryLabels)) {
-          esriImageryLabels.setOpacity(value);
-        }
-        if (map.hasLayer(osmTransparent)) {
-          osmTransparent.setOpacity(value);
+          setLayerOpacity(esriImageryLabels, value);
+        } else if (map.hasLayer(osmTransparent)) {
+          setLayerOpacity(osmTransparent, value);
         }
         document.getElementById('opacityValue').textContent = this.value;
       });
+
+      // initialize overlays' opacity to the slider's default value
+      setLayerOpacity(osmTransparent, document.getElementById('opacitySlider').value / 100);
+      setLayerOpacity(esriImageryLabels, document.getElementById('opacitySlider').value / 100);
     </script>
 </body>
 </html>
