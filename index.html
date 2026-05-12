@@ -234,9 +234,6 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         var mapbox=  L.tileLayer('tiles/{z}/{x}/{y}.png');
 
 
-
-
-
         //initiating the map variable
         var map = L.map('map', {
           zoom: 10,
@@ -249,16 +246,10 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         map.setMinZoom(9);
         map.setMaxZoom(14);
 
-        //grouping base layers defined above and assigning them to a var
-        var baseLayers = {
-            "Uydu": esriImageryLabels
-           };
-        var tileLayers= {
-        	 "Istanbul Jeoloji": mapbox,
-        	 "Uydu": esriImageryLabels
-        }
+        //grouping overlay layers defined above and assigning them to a var
         var overlayLayers = {
-          "Şehir Haritası": osmTransparent
+          "Şehir Haritası": osmTransparent,
+          "Uydu": esriImageryLabels,
         };
 
         //initiating the side bar
@@ -279,10 +270,19 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       }).addTo(map);
 
        //Adding all layers and feautes to map
-        L.control.layers(tileLayers, overlayLayers, {
+        L.control.layers({}, overlayLayers, {
         	position:"topleft",
-        	collapsed: true
+            collapsed: false
         }).addTo(map);
+
+      // Make Uydu and Şehir Haritası mutually exclusive (radio buttons)
+      map.on('overlayadd', function(e) {
+        if (e.name === 'Uydu') {
+          map.removeLayer(osmTransparent);
+        } else if (e.name === 'Şehir Haritası') {
+          map.removeLayer(esriImageryLabels);
+        }
+      });
 
       // Opacity control
       var OpacityControl = L.Control.extend({
@@ -298,10 +298,15 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       });
       new OpacityControl().addTo(map);
 
-      // Update opacity on slider change
+      // Update opacity on slider change - controls whichever overlay is currently selected
       document.getElementById('opacitySlider').addEventListener('input', function() {
         var value = this.value / 100;
-        osmTransparent.setOpacity(value);
+        if (map.hasLayer(esriImageryLabels)) {
+          esriImageryLabels.setOpacity(value);
+        }
+        if (map.hasLayer(osmTransparent)) {
+          osmTransparent.setOpacity(value);
+        }
         document.getElementById('opacityValue').textContent = this.value;
       });
     </script>
