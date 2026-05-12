@@ -22,7 +22,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9427199806484048"
      crossorigin="anonymous"></script>
 
-     
+
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -54,9 +54,35 @@
             color: #AAA;
         }
 
+        .opacity-control {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            font-family: 'Ubuntu', sans-serif;
+            font-size: 12px;
+        }
+
+        .opacity-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .opacity-control input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .opacity-value {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #666;
+        }
 
     </style>
-    
+
 </head>
 <body>
     <div id="sidebar" class="leaflet-sidebar collapsed">
@@ -96,8 +122,8 @@
                 href="https://mapelse.github.io/global_vs30/"><b> Turkiye Vs30 Deprem Sarsinti Potansiyeli Haritasi icin     tıklayınız</b></a> </p>
 
                 <p style="margin-top:1px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify ></p><a href="https://mapelse.github.io/fayHatlari/"><b>Türkiye Önemli Fay Hatları ve 6 Siddetinin Uzerinde Gerceklesen Depremler Haritası için tıklayınız</b></a> </p>
-                
-                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify> Not:Bu bilgiler genel bilgilendirme amaçlıdır ve profesyonel tavsiye olarak kabul edilmemelidir. 
+
+                <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify> Not:Bu bilgiler genel bilgilendirme amaçlıdır ve profesyonel tavsiye olarak kabul edilmemelidir.
                     Mevcut verilerin kullanışlı bir şekilde sunumundan ibarettir.
                     Herhangi bir karar vermeden önce uygun uzmanlardan tavsiye almanız önerilir. </p>
                 <p style="margin-top:30px; font-family:'Ubuntu', sans-serif; line-height: 20px" align=justify >Bu harita Twitter'da gördüğüm <a href="https://twitter.com/Paleosismolog/status/1183796422300311552" target="_blank">şu paylaşım</a>'dan esinelenerek hazırlanmıştır. Veri İstanbul Büyükşehir Belediyesi tarafından oluşturulmuştur. Haritayı hazırlamaktaki temel amaç beklenen büyük İstanbul depremi öncesi zeminin jeolojik yapısı hakkında bir fikir vermektir.</p>
@@ -135,7 +161,7 @@
 
                 <!-- just added this button as a reminder for using this bar as button container in future works-->
                 <!-- <button type="button" class="btn btn-primary">Primary</button> -->
-                        
+
             </div>
 
             <div class="leaflet-sidebar-pane" id="profile">
@@ -183,8 +209,13 @@
           attribution: 'Map data &copy; OpenStreetMap contributors'
         });*/
 
-        var osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; OpenStreetMap contributors'
+        var osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        var osmTransparent = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          opacity: 0.6
         });
 
         var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -203,9 +234,6 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         var mapbox=  L.tileLayer('tiles/{z}/{x}/{y}.png');
 
 
-
-
-
         //initiating the map variable
         var map = L.map('map', {
           zoom: 10,
@@ -218,14 +246,15 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
         map.setMinZoom(9);
         map.setMaxZoom(14);
 
-        //grouping base layers defined above and assigning them to a var
-        var baseLayers = {
-            "Uydu": esriImageryLabels
-           };
-        var tileLayers= {
-        	 "Istanbul Jeoloji": mapbox
+        //grouping overlay layers (top layers) defined above and assigning them to a var
+        // `mapbox` remains always visible as the base layer
+        var overlayLayers = {
+          "Şehir Haritası": osmTransparent,
+          "Uydu": esriImageryLabels
+        };
 
-        }
+        // Show 'Şehir Haritası' by default
+        map.addLayer(osmTransparent);
 
         //initiating the side bar
         var sidebar = L.control.sidebar({ container: 'sidebar', position: 'right' })
@@ -244,11 +273,68 @@ var esriImageryLabels = L.featureGroup([esriImagery, esriLabels]);
       	position: "topleft"
       }).addTo(map);
 
-       //Adding all layers and feautes to map
-        L.control.layers(tileLayers,baseLayers,{
+       //Adding overlay layers to the control (checkboxes). We'll enforce exclusivity below.
+        L.control.layers(null, overlayLayers, {
         	position:"topleft",
-        	collapsed: true
+            collapsed: false
         }).addTo(map);
+
+      // Opacity control
+      var OpacityControl = L.Control.extend({
+        options: {
+          position: 'topleft'
+        },
+        onAdd: function(map) {
+          var container = L.DomUtil.create('div', 'opacity-control');
+          container.innerHTML = '<label>Harita Saydamlığı</label><input type="range" min="0" max="100" value="60" id="opacitySlider"><div class="opacity-value"><span id="opacityValue">60</span>%</div>';
+          L.DomEvent.disableClickPropagation(container);
+          return container;
+        }
+      });
+      new OpacityControl().addTo(map);
+
+      // Make Uydu and Şehir Haritası mutually exclusive (simulate radio buttons)
+      map.on('overlayadd', function(e) {
+        if (e.name === 'Uydu') {
+          if (map.hasLayer(osmTransparent)) map.removeLayer(osmTransparent);
+        } else if (e.name === 'Şehir Haritası') {
+          if (map.hasLayer(esriImageryLabels)) map.removeLayer(esriImageryLabels);
+        }
+      });
+
+      // Helper to set opacity on a layer or a group of layers
+      function setLayerOpacity(layer, value) {
+        if (!layer) return;
+        if (typeof layer.setOpacity === 'function') {
+          layer.setOpacity(value);
+          return;
+        }
+        if (typeof layer.eachLayer === 'function') {
+          layer.eachLayer(function(l) {
+            if (typeof l.setOpacity === 'function') l.setOpacity(value);
+          });
+          return;
+        }
+        try {
+          var container = layer.getContainer && layer.getContainer();
+          if (container) container.style.opacity = value;
+        } catch (err) {}
+      }
+
+      // Update opacity on slider change - controls whichever overlay is currently selected
+      document.getElementById('opacitySlider').addEventListener('input', function() {
+        var value = this.value / 100;
+        if (map.hasLayer(esriImageryLabels)) {
+          setLayerOpacity(esriImageryLabels, value);
+        } else if (map.hasLayer(osmTransparent)) {
+          setLayerOpacity(osmTransparent, value);
+        }
+        document.getElementById('opacityValue').textContent = this.value;
+      });
+
+      // initialize overlays' opacity to the slider's default value
+      setLayerOpacity(osmTransparent, document.getElementById('opacitySlider').value / 100);
+      setLayerOpacity(esriImageryLabels, document.getElementById('opacitySlider').value / 100);
     </script>
 </body>
 </html>
